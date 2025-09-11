@@ -1,0 +1,35 @@
+.container {
+  display: flex;
+  color: white;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+
+  .iconContainer {
+    background-color: rgb(255, 255, 255, 0.3);
+    width: fit-content;
+    height: fit-content;
+    padding: 8px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    .icon {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+
+    .star {
+      color: rgb(255, 204, 0);
+    }
+  }
+
+  .title {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    margin-right: 15px;
+  }
+}

@@ -1,0 +1,9 @@
+@use "../../styles/mixins" as *;
+
+.sidebar {
+  @include glass-card;
+  width: fit-content;
+  min-height: 100vh;
+  padding: 13px;
+  color: white;
+}

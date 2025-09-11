@@ -1,0 +1,109 @@
+.container {
+  background-color: rgb(236, 236, 236);
+  margin-right: 10px;
+  padding: 20px 10px 10px 10px;
+  box-shadow: 0px 3px 15px -5px #777777;
+  border-radius: 10px;
+  height: fit-content;
+  width: 250px;
+
+  .listTitle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-weight: 800;
+    margin-left: 10px;
+    margin-bottom: 15px;
+
+    .deleteListText {
+      font-size: 10px;
+      color: red;
+    }
+  }
+
+  .emptyPlaceholder {
+    min-height: 10px;
+  }
+
+  .addCardInput {
+    background-color: rgb(255, 255, 255);
+    padding: 10px 15px;
+    margin: 5px;
+    border-radius: 10px;
+    box-shadow: 0px 3px 5px -5px #777777;
+
+    input {
+      background: transparent;
+      border: none;
+      outline: none;
+      font-size: 15px;
+    }
+  }
+
+  .addCard {
+    display: flex;
+    margin-top: 12px;
+    cursor: pointer;
+  }
+
+  .addingCard {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .addCardConfirmButton {
+      background-color: rgb(225, 187, 255);
+      width: fit-content;
+      height: fit-content;
+      padding: 7px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      margin-top: 5px;
+      cursor: pointer;
+    }
+
+    .icon {
+      margin-top: 3px;
+      cursor: pointer;
+    }
+  }
+
+  &.dragging {
+    transform: rotate(5deg) scale(1.05);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 10px 20px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(145deg, #ffffff, #f0f0f0);
+    opacity: 0.95;
+
+    &::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(
+        145deg,
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(0, 0, 0, 0.1) 100%
+      );
+      border-radius: inherit;
+      pointer-events: none;
+    }
+
+    animation: dragFloat 0.3s ease-out;
+  }
+
+  @keyframes dragFloat {
+    0% {
+      transform: rotate(0deg) scale(1);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    100% {
+      transform: rotate(5deg) scale(1.05);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+  }
+}

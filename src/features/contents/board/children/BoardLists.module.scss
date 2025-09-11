@@ -1,0 +1,71 @@
+.container {
+  display: flex;
+  width: max-content;
+
+  .listsContainer {
+    display: flex;
+  }
+
+  .addList {
+    display: flex;
+    background-color: rgb(255, 255, 255, 0.3);
+    width: fit-content;
+    min-width: max-content;
+    height: fit-content;
+    padding: 8px 12px 8px 8px;
+    border-radius: 5px;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    flex-shrink: 0;
+    cursor: pointer;
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.15);
+    }
+  }
+
+  .addingList {
+    background-color: rgb(236, 236, 236);
+    padding: 20px 10px 10px 10px;
+    box-shadow: 0px 3px 15px -5px #777777;
+    border-radius: 10px;
+    height: fit-content;
+    width: 250px;
+
+    input {
+      background: white;
+      outline: none;
+      border: solid 1px white;
+      padding: 7px;
+      border-radius: 5px;
+      width: 100%;
+      height: 2.2rem;
+      font-size: 15px;
+    }
+
+    .addingListButtons {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      .addListConfirmButton {
+        background-color: rgb(225, 187, 255);
+        width: fit-content;
+        height: fit-content;
+        padding: 7px;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 14px;
+        margin-top: 5px;
+        cursor: pointer;
+      }
+
+      .icon {
+        margin-top: 3px;
+        cursor: pointer;
+      }
+    }
+  }
+}
