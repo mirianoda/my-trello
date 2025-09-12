@@ -28,10 +28,14 @@ import { useDroppable } from "@dnd-kit/core";
 type Props = {
   listId: string;
   boardId: string;
+  listInfo: {
+    id: string;
+    title: string;
+    cards: string[];
+  };
 };
 
-const List = ({ listId, boardId }: Props) => {
-  const listInfo = useAppSelector((state) => state.list[listId]);
+const List = ({ listId, boardId, listInfo }: Props) => {
   const dispatch = useAppDispatch();
   const [addingCard, setAddingCard] = useState<boolean>(false);
   const [cardTitle, setCardTitle] = useState<string>("");

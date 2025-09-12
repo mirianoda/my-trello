@@ -2,7 +2,7 @@ import styles from "./BoardLists.module.scss";
 import List from "../../list/List";
 import DragOverlayList from "../../list/DragOverlayList";
 import AddIcon from "@mui/icons-material/Add";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ClearIcon from "@mui/icons-material/Clear";
 import { nanoid } from "nanoid";
 import { useAppDispatch, useAppSelector } from "../../../../App/hooks";
@@ -13,6 +13,7 @@ import {
   SortableContext,
 } from "@dnd-kit/sortable";
 import {
+  closestCenter,
   DndContext,
   DragOverlay,
   type DragEndEvent,
@@ -20,6 +21,7 @@ import {
   type DragStartEvent,
 } from "@dnd-kit/core";
 import DragOverlayCard from "../../card/DragOverlayCard";
+import type { Lists } from "../../types";
 
 type Props = {
   listIds: string[];
@@ -28,11 +30,26 @@ type Props = {
 
 const BoardLists = ({ listIds, boardId }: Props) => {
   const dispatch = useAppDispatch();
+  const reduxLists = useAppSelector((state) => state.list);
+
   const [addingList, setAddingList] = useState<boolean>(false);
   const [listTitle, setListTitle] = useState<string>("");
-  const [activeId, setActiveId] = useState<string | null>(null);
+  const [localListIds, setLocalListIds] = useState<string[]>([]);
+  const [localLists, setLocalLists] = useState<Lists>({});
+  const [isDragging, setIsDragging] = useState<boolean>(false);
+  const [activeId, setActiveId] = useState<{
+    id: string;
+    listId: string;
+  } | null>(null);
   const [activeType, setActiveType] = useState<"card" | "list" | null>(null);
-  const lists = useAppSelector((state) => state.list);
+  const lastOverCard = useRef<{ id: string; listId: string } | null>(null);
+
+  useEffect(() => {
+    if (!isDragging) {
+      setLocalListIds([...listIds]);
+      setLocalLists(structuredClone(reduxLists));
+    }
+  }, [listIds, reduxLists]);
 
   const handleAddList = (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,8 +64,12 @@ const BoardLists = ({ listIds, boardId }: Props) => {
   };
 
   const handleDragStart = (e: DragStartEvent) => {
-    setActiveId(e.active.id as string);
+    setActiveId({
+      id: e.active.id as string,
+      listId: e.active.data.current?.listId,
+    });
     setActiveType(e.active.data.current?.type || null);
+    setIsDragging(true);
   };
 
   const handleDragOver = (e: DragOverEvent) => {
@@ -59,24 +80,98 @@ const BoardLists = ({ listIds, boardId }: Props) => {
     const activeData = active.data.current;
     const overData = over.data.current;
 
-    if (!overData) return;
+    if (!activeData || !overData) return;
+
+    const activeListId = activeData.listId;
+    const overListId = overData.listId;
 
     if (
-      activeData?.type === "card" &&
+      activeData.type === "card" &&
       (overData.type === "card" || overData.type === "list")
     ) {
-      const activeListId = activeData.listId;
-      const overListId = overData.listId as string;
-
-      const cardIds = lists[activeListId].cards;
-      const fromIndex = cardIds.findIndex((cardId) => cardId === active.id);
+      lastOverCard.current = { id: over.id as string, listId: overListId };
+      const localActiveCardIds = localLists[activeListId].cards;
+      const localOverCardIds = localLists[overListId].cards;
+      const fromIndex = localActiveCardIds.findIndex(
+        (cardId) => cardId === active.id
+      );
       const toIndex =
         overData.type === "card"
-          ? cardIds.findIndex((cardId) => cardId === over.id)
+          ? localOverCardIds.findIndex((cardId) => cardId === over.id)
           : 0; //overData.type==="list"の場合（リストにタスクがない時）は、先頭に挿入
 
       if (fromIndex === toIndex && activeListId === overListId) return;
+      let newLists = { ...localLists };
 
+      if (activeListId === overListId) {
+        let newCardIds = [...localActiveCardIds];
+        const [move] = newCardIds.splice(fromIndex, 1);
+        newCardIds.splice(toIndex, 0, move);
+
+        newLists[activeListId].cards = newCardIds;
+      } else {
+        let newActiveCardIds = [...localActiveCardIds];
+        let newOverCardIds = [...localOverCardIds];
+        const [move] = newActiveCardIds.splice(fromIndex, 1);
+        newOverCardIds.splice(toIndex, 0, move);
+
+        newLists[activeListId].cards = newActiveCardIds;
+        newLists[overListId].cards = newOverCardIds;
+      }
+
+      setLocalLists(newLists);
+    } else if (
+      activeData?.type === "list" &&
+      (overData.type === "card" || overData.type === "list")
+    ) {
+      const fromIndex = localListIds.findIndex(
+        (listIds) => listIds === activeListId
+      );
+      const toIndex = localListIds.findIndex(
+        (listIds) => listIds === overListId
+      );
+      let newListIds = [...localListIds];
+      const [move] = newListIds.splice(fromIndex, 1);
+      newListIds.splice(toIndex, 0, move);
+      setLocalListIds(newListIds);
+    }
+  };
+
+  const handleDragEnd = (e: DragEndEvent) => {
+    setActiveId(null);
+    setActiveType(null);
+    setIsDragging(false);
+
+    const { active, over } = e;
+
+    if (!over) return;
+
+    const activeData = active.data.current;
+    const overData = over.data.current;
+
+    if (!activeData || !overData) return;
+
+    const activeListId = activeId?.listId || activeData.listId;
+    const overListId = lastOverCard.current?.listId || overData.listId;
+
+    if (
+      activeData.type === "card" &&
+      (overData.type === "card" || overData.type === "list")
+    ) {
+      const reduxActiveCardIds = reduxLists[activeListId].cards;
+      const reduxOverCardIds = reduxLists[overListId].cards;
+      const fromIndex = reduxActiveCardIds.findIndex(
+        (cardId) => cardId === active.id
+      );
+
+      const toIndex =
+        overData.type === "card"
+          ? localLists[overListId].cards.findIndex(
+              (cardId) => cardId === activeId?.id
+            )
+          : 0; //overData.type==="list"の場合（リストにタスクがない時）は、先頭に挿入
+
+      if (fromIndex === toIndex && activeListId === overListId) return;
       dispatch(
         moveCardIds({
           fromListId: activeListId,
@@ -85,70 +180,24 @@ const BoardLists = ({ listIds, boardId }: Props) => {
           to: toIndex,
         })
       );
-    } else if (activeData?.type === "list") {
-      console.log(over.id, overData.type, overData.listId);
+    } else if (
+      activeData.type === "list" &&
+      (overData.type === "card" || overData.type === "list")
+    ) {
+      const fromIndex = listIds.findIndex((listId) => listId === activeListId);
+      const toIndex = localListIds.findIndex(
+        (listId) => listId === activeId?.id
+      );
       dispatch(
         moveListIds({
           boardId,
-          from: listIds.findIndex((listId) => listId === active.id),
-          to: listIds.findIndex((listId) => listId === overData.listId),
+          from: fromIndex,
+          to: toIndex,
         })
       );
     }
-  };
 
-  const handleDragEnd = (e: DragEndEvent) => {
-    setActiveId(null);
-    setActiveType(null);
-
-    const { active, over } = e;
-
-    if (!over || active.id === over.id) return;
-
-    const activeData = active.data.current;
-    const overData = over.data.current;
-
-    if (!overData) return;
-
-    if (
-      activeData?.type === "card" &&
-      (overData.type === "card" || overData.type === "list")
-    ) {
-      // const activeListId = activeData.listId;
-      // const overListId = overData.listId as string;
-      // const cardIds = lists[activeListId].cards;
-      // const fromIndex = cardIds.findIndex((cardId) => cardId === active.id);
-      // const toIndex =
-      //   overData.type === "card"
-      //     ? cardIds.findIndex((cardId) => cardId === over.id)
-      //     : 0; //overData.type==="list"の場合（リストにタスクがない時）は、先頭に挿入
-      // if (fromIndex === toIndex && activeListId === overListId) return;
-      // dispatch(
-      //   moveCardIds({
-      //     fromListId: activeListId,
-      //     toListId: overListId,
-      //     from: fromIndex,
-      //     to: toIndex,
-      //   })
-      // );
-    } else if (activeData?.type === "list") {
-      // const fromIndex = listIds.findIndex((listId) => listId === active.id);
-      // const toIndex = listIds.findIndex((listId) => listId === overData.listId);
-      // console.log(
-      //   "Drop:" + over.id,
-      //   overData.type,
-      //   overData.listId,
-      //   fromIndex,
-      //   toIndex
-      // );
-      // dispatch(
-      //   moveListIds({
-      //     boardId,
-      //     from: fromIndex,
-      //     to: toIndex,
-      //   })
-      // );
-    }
+    lastOverCard.current = null;
   };
 
   return (
@@ -157,14 +206,20 @@ const BoardLists = ({ listIds, boardId }: Props) => {
         onDragOver={handleDragOver}
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
+        collisionDetection={closestCenter}
       >
         <SortableContext
-          items={listIds}
+          items={localListIds}
           strategy={horizontalListSortingStrategy}
         >
           <div className={styles.listsContainer}>
-            {listIds.map((listId) => (
-              <List key={listId} listId={listId} boardId={boardId} />
+            {localListIds.map((listId) => (
+              <List
+                key={listId}
+                listId={listId}
+                boardId={boardId}
+                listInfo={localLists[listId]}
+              />
             ))}
           </div>
         </SortableContext>
@@ -172,9 +227,9 @@ const BoardLists = ({ listIds, boardId }: Props) => {
         {/* カスタムDragOverlay */}
         <DragOverlay>
           {activeId && activeType === "list" ? (
-            <DragOverlayList listId={activeId} />
+            <DragOverlayList listId={activeId.id} />
           ) : activeId && activeType === "card" ? (
-            <DragOverlayCard cardId={activeId} />
+            <DragOverlayCard cardId={activeId.id} />
           ) : null}
         </DragOverlay>
       </DndContext>
