@@ -8,6 +8,7 @@ import {
   moveListIds,
   removeListFromBoard,
 } from "../board/boardSlice";
+import toast from "react-hot-toast";
 
 interface AddListArgs {
   listId: string;
@@ -42,7 +43,9 @@ const addList = createAsyncThunk<
     } catch (e) {
       dispatch(optimisticRemoveList({ listId }));
       dispatch(removeListFromBoard({ listId, boardId }));
-      alert("リストの追加に失敗しました。ネットワークを確認してください。");
+      toast.error(
+        "リストの追加に失敗しました。ネットワークを確認してください。"
+      );
       return rejectWithValue((e as Error).message);
     }
   }
@@ -73,7 +76,7 @@ const removeList = createAsyncThunk<
         dispatch(optimisticAddList(prevList));
         dispatch(addListToBoard({ listId, boardId }));
       }
-      alert("リストの削除に失敗しました");
+      toast.error("リストの削除に失敗しました");
       return rejectWithValue((e as Error).message);
     }
   }
@@ -108,7 +111,7 @@ const moveList = createAsyncThunk<
       return;
     } catch (e) {
       dispatch(moveListIds({ boardId, from: to, to: from }));
-      alert("リストの移動に失敗しました");
+      toast.error("リストの移動に失敗しました");
       return rejectWithValue((e as Error).message);
     }
   }

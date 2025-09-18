@@ -1,5 +1,6 @@
 import { useAppDispatch, useAppSelector } from "../../../App/hooks";
-import { selectBoard } from "../../../App/sessionSlice";
+import { selectBoard } from "../../../App/slices/sessionSlice";
+import Loading from "../../../components/Loading ";
 import styles from "./Board.module.scss";
 import BoardLists from "./children/BoardLists";
 import BoardTitle from "./children/BoardTitle";
@@ -12,8 +13,6 @@ const Board = () => {
     (state) => state.session.currentBoardId
   );
 
-  if (isLoading) return <div>Loading...</div>;
-
   const recentBoardIds = Object.values(reduxBoards)
     .sort(
       (a, b) =>
@@ -22,6 +21,8 @@ const Board = () => {
     .map((board) => board.id);
   const currentBoardId = currentBoardIdFromSession || recentBoardIds[0];
   const boardInfo = reduxBoards[currentBoardId];
+
+  if (isLoading) return <Loading />;
 
   if (!boardInfo) {
     if (recentBoardIds[0]) {

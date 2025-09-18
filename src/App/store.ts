@@ -2,8 +2,8 @@ import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import boardReducer from "../features/contents/board/boardSlice";
 import listReducer from "../features/contents/list/listSlice";
 import cardReducer from "../features/contents/card/cardSlice";
-import sessionReducer from "./sessionSlice";
-import userReducer from "./userSlice";
+import sessionReducer from "./slices/sessionSlice";
+import userReducer from "./slices/userSlice";
 import { persistReducer, persistStore } from "redux-persist";
 import localForage from "localforage";
 import {

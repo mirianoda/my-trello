@@ -35,5 +35,9 @@
 
   .menuContainer {
     margin-left: auto;
+
+    :global(.MuiIconButton-root) {
+      color: white !important;
+    }
   }
 }

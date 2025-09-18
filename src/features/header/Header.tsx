@@ -21,6 +21,7 @@ import { useAppSelector } from "../../App/hooks";
 import { useState } from "react";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase";
+import toast from "react-hot-toast";
 
 const Header = () => {
   const user = useAppSelector((state) => state.user.user);
@@ -42,9 +43,9 @@ const Header = () => {
       signOut(auth);
     } catch (error) {
       if (error instanceof Error) {
-        alert(error.message);
+        toast.error(error.message);
       } else {
-        alert("ログインに失敗しました");
+        toast.error("ログインに失敗しました");
       }
     }
   };

@@ -5,6 +5,7 @@ import HighlightOffIcon from "@mui/icons-material/HighlightOff";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { removeCard } from "./cardThunk";
+import Loading from "../../../components/Loading ";
 
 type Props = {
   cardId: string;
@@ -13,6 +14,7 @@ type Props = {
 
 const Card = ({ cardId, listId }: Props) => {
   const cardInfo = useAppSelector((state) => state.card.cards[cardId]);
+  const isLoading = useAppSelector((state) => state.card.isLoading);
   const [isHovered, setIsHovered] = useState(false);
   const dispatch = useAppDispatch();
 
@@ -41,6 +43,8 @@ const Card = ({ cardId, listId }: Props) => {
   const handleDeleteCard = () => {
     dispatch(removeCard({ cardId, listId }));
   };
+
+  if (isLoading) return <Loading />;
 
   if (!cardInfo) {
     return null;

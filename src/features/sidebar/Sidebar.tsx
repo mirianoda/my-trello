@@ -8,7 +8,7 @@ import { useAppDispatch, useAppSelector } from "../../App/hooks";
 import React, { useState } from "react";
 import { addBoard } from "../contents/board/boardThunks";
 import { nanoid } from "nanoid";
-import { selectBoard } from "../../App/sessionSlice";
+import { selectBoard } from "../../App/slices/sessionSlice";
 
 const Sidebar = () => {
   const dispatch = useAppDispatch();

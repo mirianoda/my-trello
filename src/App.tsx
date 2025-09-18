@@ -6,7 +6,7 @@ import { useEffect } from "react";
 import Login from "./features/login/Login";
 import { useAppDispatch, useAppSelector } from "./App/hooks";
 import { auth, db } from "./firebase";
-import { login, logout } from "./App/userSlice";
+import { login, logout } from "./App/slices/userSlice";
 import {
   collection,
   doc,
@@ -22,6 +22,7 @@ import { setBoards } from "./features/contents/board/boardSlice";
 import { setLists } from "./features/contents/list/listSlice";
 import { setCards } from "./features/contents/card/cardSlice";
 import { nanoid } from "nanoid";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   const user = useAppSelector((state) => state.user.user);
@@ -201,6 +202,7 @@ function App() {
       ) : (
         <Login />
       )}
+      <Toaster position="bottom-center" reverseOrder={false} />
     </>
   );
 }

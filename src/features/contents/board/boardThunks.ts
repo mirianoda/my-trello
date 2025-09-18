@@ -1,9 +1,10 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import type { AppDispatch, RootState } from "../../../App/store";
-import { logout } from "../../../App/userSlice";
+import { logout } from "../../../App/slices/userSlice";
 import { optimisticAddBoard, optimisticRemoveBoard } from "./boardSlice";
 import { deleteDoc, doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { db } from "../../../firebase";
+import toast from "react-hot-toast";
 
 interface AddBoardArgs {
   boardId: string;
@@ -20,7 +21,7 @@ const addBoard = createAsyncThunk<
     const uid = getState().user.user?.uid;
 
     if (!uid) {
-      alert("ユーザー認証に失敗しました。再度ログインしてください。");
+      toast.error("ユーザー認証に失敗しました。再度ログインしてください。");
       dispatch(logout());
       return rejectWithValue("ユーザーがログインしていません");
     }
@@ -43,7 +44,9 @@ const addBoard = createAsyncThunk<
       return;
     } catch (e) {
       dispatch(removeBoard({ boardId }));
-      alert("ボードの追加に失敗しました。ネットワークを確認してください。");
+      toast.error(
+        "ボードの追加に失敗しました。ネットワークを確認してください。"
+      );
       return rejectWithValue((e as Error).message);
     }
   }
@@ -71,7 +74,7 @@ const removeBoard = createAsyncThunk<
       if (prevBoard) {
         dispatch(optimisticAddBoard(prevBoard));
       }
-      alert("ボードの削除に失敗しました");
+      toast.error("ボードの削除に失敗しました");
       return rejectWithValue((e as Error).message);
     }
   }

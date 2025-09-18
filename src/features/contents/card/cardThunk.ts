@@ -8,6 +8,7 @@ import {
   moveCardIds,
   removeCardFromList,
 } from "../list/listSlice";
+import toast from "react-hot-toast";
 
 interface AddCardArgs {
   cardId: string;
@@ -41,7 +42,9 @@ const addCard = createAsyncThunk<
       return;
     } catch (e) {
       dispatch(optimisticRemoveCard({ cardId }));
-      alert("カードの追加に失敗しました。ネットワークを確認してください。");
+      toast.error(
+        "カードの追加に失敗しました。ネットワークを確認してください。"
+      );
       return rejectWithValue((e as Error).message);
     }
   }
@@ -72,7 +75,7 @@ const removeCard = createAsyncThunk<
         dispatch(optimisticAddCard(prevCard));
         dispatch(addCardToList({ cardId, listId }));
       }
-      alert("カードの削除に失敗しました");
+      toast.error("カードの削除に失敗しました");
       return rejectWithValue((e as Error).message);
     }
   }
@@ -118,7 +121,7 @@ const moveCard = createAsyncThunk<
           to: from,
         })
       );
-      alert("カードの移動に失敗しました");
+      toast.error("カードの移動に失敗しました");
       return rejectWithValue((e as Error).message);
     }
   }

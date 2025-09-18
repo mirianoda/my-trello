@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import type { Session } from "./types";
+import type { Session } from "../types";
 
 const initialState: Session = {
   currentBoardId: "",

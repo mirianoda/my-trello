@@ -1,7 +1,7 @@
-import React from "react";
 import styles from "./Login.module.scss";
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../../firebase";
+import toast from "react-hot-toast";
 
 const Login = () => {
   const signIn = async () => {
@@ -9,9 +9,9 @@ const Login = () => {
       await signInWithPopup(auth, provider);
     } catch (error) {
       if (error instanceof Error) {
-        alert(error.message);
+        toast.error(error.message);
       } else {
-        alert("ログインに失敗しました");
+        toast.error("ログインに失敗しました");
       }
     }
   };

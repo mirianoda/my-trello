@@ -22,6 +22,7 @@ import DragOverlayCard from "../../card/DragOverlayCard";
 import type { Lists } from "../../types";
 import { addList, moveList } from "../../list/listThunks";
 import { moveCard } from "../../card/cardThunk";
+import Loading from "../../../../components/Loading ";
 
 type Props = {
   listIds: string[];
@@ -31,6 +32,7 @@ type Props = {
 const BoardLists = ({ listIds, boardId }: Props) => {
   const dispatch = useAppDispatch();
   const reduxLists = useAppSelector((state) => state.list.lists);
+  const isLoading = useAppSelector((state) => state.list.isLoading);
 
   const [isAddListOpen, isSetAddListOpen] = useState<boolean>(false);
   const [newListTitle, setNewListTitle] = useState<string>("");
@@ -204,6 +206,8 @@ const BoardLists = ({ listIds, boardId }: Props) => {
     setActiveId(null);
     setActiveType(null);
   };
+
+  if (isLoading) return <Loading />;
 
   return (
     <div className={styles.container}>
