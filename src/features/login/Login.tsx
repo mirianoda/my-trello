@@ -4,10 +4,16 @@ import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../../firebase";
 
 const Login = () => {
-  const signIn = () => {
-    signInWithPopup(auth, provider).catch((err) => {
-      alert(err.message);
-    });
+  const signIn = async () => {
+    try {
+      await signInWithPopup(auth, provider);
+    } catch (error) {
+      if (error instanceof Error) {
+        alert(error.message);
+      } else {
+        alert("ログインに失敗しました");
+      }
+    }
   };
   return (
     <div className={styles.loginContainer}>

@@ -28,7 +28,6 @@ function App() {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    console.log("ユーザーuseEffect実行");
     const unsubscribe = auth.onAuthStateChanged(async (loginUser) => {
       if (loginUser) {
         const uid = loginUser.uid;
@@ -70,17 +69,16 @@ function App() {
             order: 0,
           });
         }
-        console.log("ユーザー情報を登録");
-        dispatch(
-          login({
-            uid: loginUser.uid,
-            photo: loginUser.photoURL,
-            email: loginUser.email,
-            displayName: loginUser.displayName,
-          })
-        );
+
+        const userData = {
+          uid: loginUser.uid,
+          photo: loginUser.photoURL,
+          email: loginUser.email,
+          displayName: loginUser.displayName,
+        };
+
+        dispatch(login(userData));
       } else {
-        console.log("ログアウト");
         dispatch(logout());
       }
     });

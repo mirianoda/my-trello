@@ -1,4 +1,5 @@
 @use "../../styles/mixins" as *;
+@use "../../styles/tokens" as *;
 
 .headerContainer {
   display: grid;
@@ -55,7 +56,44 @@
     align-items: center;
     justify-self: right;
     gap: 5px;
+
+    .menuContainer {
+      .avatar {
+        cursor: pointer;
+      }
+    }
   }
+}
+
+:global(.MuiMenu-paper) {
+  .accountInfo {
+    padding: 15px 16px !important;
+    .name {
+      font-size: 13px;
+      font-weight: 600;
+      margin: 0;
+      color: #333;
+    }
+
+    .email {
+      font-size: 11px;
+      margin: 2px 0 0 0;
+      color: $message-color;
+      opacity: 0.8;
+    }
+  }
+
+  .logoutBtn {
+    margin-top: 10px !important;
+  }
+}
+
+:global(.MuiListItem-padding) {
+  padding: 0px 16px !important;
+}
+
+:global(.MuiMenuItem-root) {
+  padding: 10px 16px !important;
 }
 
 .iconContainer {
