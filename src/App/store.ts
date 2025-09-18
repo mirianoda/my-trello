@@ -2,8 +2,10 @@ import { configureStore, combineReducers } from "@reduxjs/toolkit";
 import boardReducer from "../features/contents/board/boardSlice";
 import listReducer from "../features/contents/list/listSlice";
 import cardReducer from "../features/contents/card/cardSlice";
+import sessionReducer from "./sessionSlice";
+import userReducer from "./userSlice";
 import { persistReducer, persistStore } from "redux-persist";
-import storage from "redux-persist/lib/storage";
+import localForage from "localforage";
 import {
   FLUSH,
   REHYDRATE,
@@ -17,11 +19,13 @@ const rootReducers = combineReducers({
   board: boardReducer,
   list: listReducer,
   card: cardReducer,
+  session: sessionReducer,
+  user: userReducer,
 });
 
 const persistConfig = {
   key: "root",
-  storage,
+  storage: localForage,
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducers);

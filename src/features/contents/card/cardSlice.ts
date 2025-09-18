@@ -2,35 +2,48 @@ import { createSlice } from "@reduxjs/toolkit";
 import type { Cards } from "../types";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { exampleCardId } from "../list/listSlice";
+import { addCard } from "./cardThunk";
 
-const initialState: Cards = {
-  [exampleCardId]: {
-    id: exampleCardId,
-    title: "Let's enjoy Trello!",
-  },
-};
+interface Card {
+  id: string;
+  title: string;
+  listId: string;
+  order: number;
+}
+interface CardsState {
+  cards: Cards;
+  isLoading: boolean;
+}
+
+const initialState: CardsState = { cards: {}, isLoading: true };
 
 export const cardSlice = createSlice({
   name: "card",
   initialState,
   reducers: {
-    addCard: (
+    optimisticAddCard: (state, action: PayloadAction<Card>) => {
+      const newCard = action.payload;
+      state.cards[newCard.id] = newCard;
+    },
+    optimisticRemoveCard: (
       state,
-      action: PayloadAction<{ cardId: string; cardTitle: string }>
+      action: PayloadAction<{ cardId: string }>
     ) => {
-      const cardId = action.payload.cardId;
-      const cardTitle = action.payload.cardTitle;
-      state[cardId] = {
-        id: cardId,
-        title: cardTitle,
-      };
+      delete state.cards[action.payload.cardId];
     },
-    removeCard: (state, action: PayloadAction<{ cardId: string }>) => {
-      const cardId = action.payload.cardId;
-      delete state[cardId];
+    setCards: (state, action: PayloadAction<Cards>) => {
+      state.cards = action.payload;
+      state.isLoading = false;
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(addCard.rejected, (state, action) => {
+      console.error(action.payload);
+      state.isLoading = false;
+    });
   },
 });
 
-export const { addCard, removeCard } = cardSlice.actions;
+export const { optimisticAddCard, optimisticRemoveCard, setCards } =
+  cardSlice.actions;
 export default cardSlice.reducer;

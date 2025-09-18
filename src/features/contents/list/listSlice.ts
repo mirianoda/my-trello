@@ -1,47 +1,40 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { Lists } from "../types";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { exampleListId } from "../board/boardSlice";
+import { addList } from "./listThunks";
 
 export const exampleCardId = "example-card-1";
 
-const initialState: Lists = {
-  [exampleListId[0]]: {
-    id: exampleListId[0],
-    title: "To Do",
-    cards: [exampleCardId],
-  },
-  [exampleListId[1]]: {
-    id: exampleListId[1],
-    title: "Doing",
-    cards: [],
-  },
-  [exampleListId[2]]: {
-    id: exampleListId[2],
-    title: "Done",
-    cards: [],
-  },
-};
+interface List {
+  id: string;
+  title: string;
+  boardId: string;
+  order: number;
+}
+interface ListsState {
+  lists: Lists;
+  isLoading: boolean;
+}
+
+const initialState: ListsState = { lists: {}, isLoading: true };
 
 export const listSlice = createSlice({
   name: "list",
   initialState,
   reducers: {
-    addList: (
-      state,
-      action: PayloadAction<{ listId: string; listTitle: string }>
-    ) => {
-      const listId = action.payload.listId;
-      const listTitle = action.payload.listTitle;
-      state[listId] = {
-        id: listId,
-        title: listTitle,
-        cards: [],
-      };
+    optimisticAddList: (state, action: PayloadAction<List>) => {
+      const newList = action.payload;
+      state.lists[newList.id] = { ...newList, cards: [] };
     },
-    removeList: (state, action: PayloadAction<{ listId: string }>) => {
-      const listId = action.payload.listId;
-      delete state[listId];
+    optimisticRemoveList: (
+      state,
+      action: PayloadAction<{ listId: string }>
+    ) => {
+      delete state.lists[action.payload.listId];
+    },
+    setLists: (state, action: PayloadAction<Lists>) => {
+      state.lists = action.payload;
+      state.isLoading = false;
     },
     addCardToList: (
       state,
@@ -49,8 +42,8 @@ export const listSlice = createSlice({
     ) => {
       const { listId, cardId } = action.payload;
 
-      if (state[listId]) {
-        state[listId].cards.push(cardId);
+      if (state.lists[listId]) {
+        state.lists[listId].cards.push(cardId);
       } else {
         console.error(
           `List with id ${listId} does not exist in state:`,
@@ -63,8 +56,8 @@ export const listSlice = createSlice({
       action: PayloadAction<{ listId: string; cardId: string }>
     ) => {
       const { listId, cardId } = action.payload;
-      const index = state[listId].cards.findIndex((l) => l === cardId);
-      state[listId].cards.splice(index, 1);
+      const index = state.lists[listId].cards.findIndex((l) => l === cardId);
+      state.lists[listId].cards.splice(index, 1);
     },
     moveCardIds: (
       state,
@@ -76,15 +69,22 @@ export const listSlice = createSlice({
       }>
     ) => {
       const { fromListId, toListId, from, to } = action.payload;
-      const moveCardId = state[fromListId].cards.splice(from, 1)[0];
-      state[toListId].cards.splice(to, 0, moveCardId);
+      const moveCardId = state.lists[fromListId].cards.splice(from, 1)[0];
+      state.lists[toListId].cards.splice(to, 0, moveCardId);
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(addList.rejected, (state, action) => {
+      console.error(action.payload);
+      state.isLoading = false;
+    });
   },
 });
 
 export const {
-  addList,
-  removeList,
+  optimisticAddList,
+  optimisticRemoveList,
+  setLists,
   addCardToList,
   removeCardFromList,
   moveCardIds,

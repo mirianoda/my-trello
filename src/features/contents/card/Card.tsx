@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../../App/hooks";
 import styles from "./Card.module.scss";
 import HighlightOffIcon from "@mui/icons-material/HighlightOff";
-import { removeCard } from "./cardSlice";
-import { removeCardFromList } from "../list/listSlice";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { removeCard } from "./cardThunk";
 
 type Props = {
   cardId: string;
@@ -13,7 +12,7 @@ type Props = {
 };
 
 const Card = ({ cardId, listId }: Props) => {
-  const cardInfo = useAppSelector((state) => state.card[cardId]);
+  const cardInfo = useAppSelector((state) => state.card.cards[cardId]);
   const [isHovered, setIsHovered] = useState(false);
   const dispatch = useAppDispatch();
 
@@ -40,9 +39,12 @@ const Card = ({ cardId, listId }: Props) => {
   };
 
   const handleDeleteCard = () => {
-    dispatch(removeCard({ cardId }));
-    dispatch(removeCardFromList({ listId, cardId }));
+    dispatch(removeCard({ cardId, listId }));
   };
+
+  if (!cardInfo) {
+    return null;
+  }
 
   return (
     <div

@@ -6,8 +6,11 @@ import AddIcon from "@mui/icons-material/Add";
 import InfoOutlineIcon from "@mui/icons-material/InfoOutline";
 import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import { Avatar } from "@mui/material";
+import { useAppSelector } from "../../App/hooks";
 
 const Header = () => {
+  const user = useAppSelector((state) => state.user.user);
+
   return (
     <div className={styles.headerContainer}>
       {/* iconsLeft */}
@@ -29,7 +32,7 @@ const Header = () => {
 
       {/* logo */}
       <div className={styles.logo}>
-        <p>Trello</p>
+        <p>Task Flow</p>
       </div>
 
       {/* iconsRight */}
@@ -43,7 +46,7 @@ const Header = () => {
         <div className={styles.iconContainer}>
           <NotificationsNoneIcon className={styles.icon} />
         </div>
-        <Avatar className={styles.avatar} />
+        <Avatar className={styles.avatar} src={user?.photo} />
       </div>
     </div>
   );

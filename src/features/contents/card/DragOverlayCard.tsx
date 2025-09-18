@@ -6,7 +6,7 @@ type Props = {
 };
 
 const DragOverlayCard = ({ cardId }: Props) => {
-  const cardInfo = useAppSelector((state) => state.card[cardId]);
+  const cardInfo = useAppSelector((state) => state.card.cards[cardId]);
 
   return (
     <div className={`${styles.container} ${styles.dragging}`}>

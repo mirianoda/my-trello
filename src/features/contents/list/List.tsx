@@ -2,10 +2,9 @@ import styles from "./List.module.scss";
 import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
 import AddIcon from "@mui/icons-material/Add";
 import Card from "../card/Card";
-import { useAppDispatch, useAppSelector } from "../../../App/hooks";
+import { useAppDispatch } from "../../../App/hooks";
 import React, { useState } from "react";
-import { addCardToList, removeList } from "./listSlice";
-import { addCard } from "../card/cardSlice";
+import { addCard } from "../card/cardThunk";
 import { nanoid } from "nanoid";
 import ClearIcon from "@mui/icons-material/Clear";
 import {
@@ -16,7 +15,6 @@ import {
   MenuItem,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { removeListFromBoard } from "../board/boardSlice";
 import {
   SortableContext,
   useSortable,
@@ -24,6 +22,7 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { useDroppable } from "@dnd-kit/core";
+import { removeList } from "./listThunks";
 
 type Props = {
   listId: string;
@@ -37,8 +36,8 @@ type Props = {
 
 const List = ({ listId, boardId, listInfo }: Props) => {
   const dispatch = useAppDispatch();
-  const [addingCard, setAddingCard] = useState<boolean>(false);
-  const [cardTitle, setCardTitle] = useState<string>("");
+  const [isAddCardOpen, setIsAddCardOpen] = useState<boolean>(false);
+  const [newCardTitle, setNewCardTitle] = useState<string>("");
 
   //MUI（Menuコンポーネント）
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
@@ -72,12 +71,18 @@ const List = ({ listId, boardId, listInfo }: Props) => {
   const handleAddCard = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (cardTitle) {
+    if (newCardTitle) {
       const cardId = nanoid();
-      dispatch(addCard({ cardId, cardTitle }));
-      dispatch(addCardToList({ listId, cardId }));
-      setCardTitle("");
-      setAddingCard(false);
+      dispatch(
+        addCard({
+          cardId,
+          cardTitle: newCardTitle,
+          listId,
+          order: listInfo.cards.length,
+        })
+      );
+      setNewCardTitle("");
+      setIsAddCardOpen(false);
     }
   };
 
@@ -91,8 +96,7 @@ const List = ({ listId, boardId, listInfo }: Props) => {
   };
 
   const handleRemoveList = () => {
-    dispatch(removeList({ listId }));
-    dispatch(removeListFromBoard({ boardId, listId }));
+    dispatch(removeList({ listId, boardId }));
   };
 
   return (
@@ -125,7 +129,7 @@ const List = ({ listId, boardId, listInfo }: Props) => {
         items={listInfo.cards}
         strategy={verticalListSortingStrategy}
       >
-        {listInfo.cards.length === 0 && !addingCard ? (
+        {listInfo.cards.length === 0 && !isAddCardOpen ? (
           <div className={styles.emptyPlaceholder} ref={setDoppableRef}></div>
         ) : (
           listInfo.cards.map((cardId) => (
@@ -134,19 +138,19 @@ const List = ({ listId, boardId, listInfo }: Props) => {
         )}
       </SortableContext>
 
-      {addingCard && (
+      {isAddCardOpen && (
         <form className={styles.addCardInput} onSubmit={handleAddCard}>
           <input
             type="text"
-            value={cardTitle}
-            onChange={(e) => setCardTitle(e.target.value)}
+            value={newCardTitle}
+            onChange={(e) => setNewCardTitle(e.target.value)}
             placeholder="タイトルを入力…"
           />
         </form>
       )}
 
-      {!addingCard ? (
-        <div className={styles.addCard} onClick={() => setAddingCard(true)}>
+      {!isAddCardOpen ? (
+        <div className={styles.addCard} onClick={() => setIsAddCardOpen(true)}>
           <AddIcon />
           <p>カードを追加</p>
         </div>
@@ -157,7 +161,7 @@ const List = ({ listId, boardId, listInfo }: Props) => {
           </div>
           <ClearIcon
             className={styles.icon}
-            onClick={() => setAddingCard(false)}
+            onClick={() => setIsAddCardOpen(false)}
           />
         </div>
       )}

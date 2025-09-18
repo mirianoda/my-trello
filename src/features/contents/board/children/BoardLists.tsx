@@ -6,8 +6,6 @@ import { useEffect, useRef, useState } from "react";
 import ClearIcon from "@mui/icons-material/Clear";
 import { nanoid } from "nanoid";
 import { useAppDispatch, useAppSelector } from "../../../../App/hooks";
-import { addList, moveCardIds } from "../../list/listSlice";
-import { addListToBoard, moveListIds } from "../boardSlice";
 import {
   horizontalListSortingStrategy,
   SortableContext,
@@ -22,6 +20,8 @@ import {
 } from "@dnd-kit/core";
 import DragOverlayCard from "../../card/DragOverlayCard";
 import type { Lists } from "../../types";
+import { addList, moveList } from "../../list/listThunks";
+import { moveCard } from "../../card/cardThunk";
 
 type Props = {
   listIds: string[];
@@ -30,10 +30,10 @@ type Props = {
 
 const BoardLists = ({ listIds, boardId }: Props) => {
   const dispatch = useAppDispatch();
-  const reduxLists = useAppSelector((state) => state.list);
+  const reduxLists = useAppSelector((state) => state.list.lists);
 
-  const [addingList, setAddingList] = useState<boolean>(false);
-  const [listTitle, setListTitle] = useState<string>("");
+  const [isAddListOpen, isSetAddListOpen] = useState<boolean>(false);
+  const [newListTitle, setNewListTitle] = useState<string>("");
   const [localListIds, setLocalListIds] = useState<string[]>([]);
   const [localLists, setLocalLists] = useState<Lists>({});
   const [isDragging, setIsDragging] = useState<boolean>(false);
@@ -54,12 +54,18 @@ const BoardLists = ({ listIds, boardId }: Props) => {
   const handleAddList = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (listTitle) {
+    if (newListTitle) {
       const listId = nanoid();
-      dispatch(addList({ listId, listTitle }));
-      dispatch(addListToBoard({ boardId, listId }));
-      setListTitle("");
-      setAddingList(false);
+      dispatch(
+        addList({
+          listId,
+          listTitle: newListTitle,
+          boardId,
+          order: listIds.length,
+        })
+      );
+      setNewListTitle("");
+      isSetAddListOpen(false);
     }
   };
 
@@ -138,8 +144,6 @@ const BoardLists = ({ listIds, boardId }: Props) => {
   };
 
   const handleDragEnd = (e: DragEndEvent) => {
-    setActiveId(null);
-    setActiveType(null);
     setIsDragging(false);
 
     const { active, over } = e;
@@ -159,7 +163,6 @@ const BoardLists = ({ listIds, boardId }: Props) => {
       (overData.type === "card" || overData.type === "list")
     ) {
       const reduxActiveCardIds = reduxLists[activeListId].cards;
-      const reduxOverCardIds = reduxLists[overListId].cards;
       const fromIndex = reduxActiveCardIds.findIndex(
         (cardId) => cardId === active.id
       );
@@ -173,7 +176,7 @@ const BoardLists = ({ listIds, boardId }: Props) => {
 
       if (fromIndex === toIndex && activeListId === overListId) return;
       dispatch(
-        moveCardIds({
+        moveCard({
           fromListId: activeListId,
           toListId: overListId,
           from: fromIndex,
@@ -189,7 +192,7 @@ const BoardLists = ({ listIds, boardId }: Props) => {
         (listId) => listId === activeId?.id
       );
       dispatch(
-        moveListIds({
+        moveList({
           boardId,
           from: fromIndex,
           to: toIndex,
@@ -198,6 +201,8 @@ const BoardLists = ({ listIds, boardId }: Props) => {
     }
 
     lastOverCard.current = null;
+    setActiveId(null);
+    setActiveType(null);
   };
 
   return (
@@ -234,14 +239,14 @@ const BoardLists = ({ listIds, boardId }: Props) => {
         </DragOverlay>
       </DndContext>
 
-      {addingList ? (
+      {isAddListOpen ? (
         <div className={styles.addingList}>
           <form onSubmit={handleAddList}>
             <input
               type="text"
-              value={listTitle}
+              value={newListTitle}
               placeholder="リスト名を入力…"
-              onChange={(e) => setListTitle(e.target.value)}
+              onChange={(e) => setNewListTitle(e.target.value)}
             />
           </form>
           <div className={styles.addingListButtons}>
@@ -253,14 +258,14 @@ const BoardLists = ({ listIds, boardId }: Props) => {
             </div>
             <ClearIcon
               className={styles.icon}
-              onClick={() => setAddingList(false)}
+              onClick={() => isSetAddListOpen(false)}
             />
           </div>
         </div>
       ) : (
-        <div className={styles.addList} onClick={() => setAddingList(true)}>
+        <div className={styles.addList} onClick={() => isSetAddListOpen(true)}>
           <AddIcon />
-          <p>もう1つリストを追加</p>
+          <p>リストを追加</p>
         </div>
       )}
     </div>

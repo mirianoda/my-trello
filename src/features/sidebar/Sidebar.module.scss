@@ -6,4 +6,104 @@
   min-height: 100vh;
   padding: 13px;
   color: white;
+  transition: width 0.5s ease, opacity 0.3s ease;
+  overflow: hidden;
+
+  p {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.closed {
+  width: 50px;
+  opacity: 1;
+}
+
+.expanded {
+  width: 300px;
+  opacity: 1;
+
+  .smallIcon {
+    width: 20px;
+  }
+
+  .sidebarMenu {
+    width: 200px;
+    display: grid;
+    grid-template-columns: fit-content(50px) 1fr fit-content(50px);
+    margin-top: 20px;
+
+    p {
+      margin-left: 5px;
+    }
+
+    .icon {
+      cursor: pointer;
+    }
+  }
+
+  .boardList {
+    margin-top: 10px;
+
+    .addBoardInput {
+      background-color: rgb(255, 255, 255);
+      padding: 4px;
+      border-radius: 10px;
+      margin-bottom: 5px;
+
+      input {
+        background: transparent;
+        border: none;
+        outline: none;
+        font-size: 14px;
+      }
+    }
+
+    .addingBoard {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+
+      .addBoardConfirmButton {
+        background-color: rgb(225, 187, 255);
+        color: black;
+        width: fit-content;
+        height: fit-content;
+        padding: 5px 10px;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 12px;
+        cursor: pointer;
+      }
+
+      .icon {
+        margin-top: 3px;
+        cursor: pointer;
+      }
+    }
+    .boardTitle {
+      display: flex;
+      padding: 4px;
+      border-radius: 10px;
+
+      p {
+        margin-left: 5px;
+        font-size: 15px;
+        font-weight: 800;
+      }
+
+      &:hover {
+        background-color: rgb(255, 255, 255, 0.15);
+      }
+    }
+
+    .selected {
+      background-color: rgb(255, 255, 255, 0.3);
+    }
+  }
 }

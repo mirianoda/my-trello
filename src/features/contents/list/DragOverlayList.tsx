@@ -9,7 +9,7 @@ type Props = {
 };
 
 const DragOverlayList = ({ listId }: Props) => {
-  const listInfo = useAppSelector((state) => state.list[listId]);
+  const listInfo = useAppSelector((state) => state.list.lists[listId]);
 
   return (
     <div className={`${styles.container} ${styles.dragging}`}>

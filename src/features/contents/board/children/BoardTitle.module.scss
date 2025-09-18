@@ -1,4 +1,4 @@
-.container {
+.boardTitleContainer {
   display: flex;
   color: white;
   align-items: center;
@@ -31,5 +31,9 @@
     font-weight: 800;
     letter-spacing: 1.5px;
     margin-right: 15px;
+  }
+
+  .menuContainer {
+    margin-left: auto;
   }
 }
