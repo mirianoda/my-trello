@@ -1,12 +1,13 @@
 @use "../../styles/mixins" as *;
+@use "../../styles/tokens" as *;
 
 .sidebar {
   @include glass-card;
   width: fit-content;
   min-height: 100vh;
-  padding: 13px;
-  color: white;
-  transition: width 0.5s ease, opacity 0.3s ease;
+  padding: $spacing-md;
+  color: $color-text-primary;
+  transition: $transition-width;
   overflow: hidden;
 
   p {
@@ -17,26 +18,24 @@
 }
 
 .closed {
-  width: 50px;
-  opacity: 1;
+  width: $sidebar-width;
 }
 
 .expanded {
-  width: 300px;
-  opacity: 1;
+  width: $sidebar-width-open;
 
   .smallIcon {
-    width: 20px;
+    width: $icon-size-sm;
   }
 
   .sidebarMenu {
-    width: 200px;
     display: grid;
     grid-template-columns: fit-content(50px) 1fr fit-content(50px);
-    margin-top: 20px;
+    margin-top: $spacing-md;
 
     p {
-      margin-left: 5px;
+      margin-left: $spacing-sm;
+      font-size: $font-size-lg;
     }
 
     .icon {
@@ -45,13 +44,13 @@
   }
 
   .boardList {
-    margin-top: 10px;
+    margin-top: $spacing-sm;
 
     .addBoardInput {
-      background-color: rgb(255, 255, 255);
-      padding: 4px;
-      border-radius: 10px;
-      margin-bottom: 5px;
+      background-color: $color-input-bg;
+      padding: $spacing-xs;
+      border-radius: $radii-md;
+      margin-bottom: $spacing-xs;
 
       input {
         background: transparent;
@@ -61,49 +60,42 @@
       }
     }
 
-    .addingBoard {
+    .addBoardButtons {
       display: flex;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
+      gap: $spacing-sm;
+      margin-bottom: $spacing-sm;
 
       .addBoardConfirmButton {
-        background-color: rgb(225, 187, 255);
-        color: black;
-        width: fit-content;
-        height: fit-content;
-        padding: 5px 10px;
-        border-radius: 5px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 12px;
-        cursor: pointer;
+        @include button-default;
       }
 
       .icon {
-        margin-top: 3px;
+        width: $icon-size-regular;
+        margin-top: $spacing-xs;
         cursor: pointer;
       }
     }
+
     .boardTitle {
       display: flex;
-      padding: 4px;
-      border-radius: 10px;
+      padding: $spacing-xs $spacing-sm;
+      margin-bottom: $spacing-xs;
+      border-radius: $radii-md;
 
       p {
-        margin-left: 5px;
-        font-size: 15px;
-        font-weight: 800;
+        margin-left: $spacing-xs;
+        font-size: $font-size-lg;
+        font-weight: $font-weight-medium;
       }
 
       &:hover {
-        background-color: rgb(255, 255, 255, 0.15);
+        background-color: $color-bg-glass-muted-hover;
       }
     }
 
     .selected {
-      background-color: rgb(255, 255, 255, 0.3);
+      background-color: $color-bg-glass-muted;
     }
   }
 }

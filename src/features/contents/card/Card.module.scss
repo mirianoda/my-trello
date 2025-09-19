@@ -1,21 +1,23 @@
+@use "../../../styles/tokens" as *;
+
 .container {
-  background-color: rgb(255, 255, 255);
-  padding: 10px 15px;
-  margin: 5px;
-  border-radius: 10px;
-  box-shadow: 0px 3px 5px -5px #777777;
+  background-color: $color-bg-card;
+  padding: $spacing-sm $spacing-md;
+  margin: $spacing-xs;
+  border-radius: $radii-md;
+  box-shadow: $shadow-card;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: 15px;
+  font-size: $font-size-md;
 
   p {
     flex: 1;
   }
 
   .icon {
-    width: 17px;
-    color: gray;
+    width: $icon-size-xs;
+    color: $color-text-secondary;
   }
 
   &.dragging {

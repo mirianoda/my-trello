@@ -17,7 +17,7 @@ const Login = () => {
   };
   return (
     <div className={styles.loginContainer}>
-      <div className={styles.logo}>T</div>
+      <div className={styles.logo}>Task Flow</div>
       <p>
         Welcome back to <span>TaskFlow</span>
         <br />

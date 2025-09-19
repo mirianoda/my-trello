@@ -1,7 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import type { Cards } from "../types";
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { exampleCardId } from "../list/listSlice";
 import { addCard } from "./cardThunk";
 
 interface Card {
@@ -35,6 +34,10 @@ export const cardSlice = createSlice({
       state.cards = action.payload;
       state.isLoading = false;
     },
+    resetCards: (state) => {
+      state.cards = {};
+      state.isLoading = true;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(addCard.rejected, (state, action) => {
@@ -44,6 +47,6 @@ export const cardSlice = createSlice({
   },
 });
 
-export const { optimisticAddCard, optimisticRemoveCard, setCards } =
+export const { optimisticAddCard, optimisticRemoveCard, setCards, resetCards } =
   cardSlice.actions;
 export default cardSlice.reducer;

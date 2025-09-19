@@ -3,8 +3,6 @@ import type { Lists } from "../types";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { addList } from "./listThunks";
 
-export const exampleCardId = "example-card-1";
-
 interface List {
   id: string;
   title: string;
@@ -35,6 +33,10 @@ export const listSlice = createSlice({
     setLists: (state, action: PayloadAction<Lists>) => {
       state.lists = action.payload;
       state.isLoading = false;
+    },
+    resetLists: (state) => {
+      state.lists = {};
+      state.isLoading = true;
     },
     addCardToList: (
       state,
@@ -85,6 +87,7 @@ export const {
   optimisticAddList,
   optimisticRemoveList,
   setLists,
+  resetLists,
   addCardToList,
   removeCardFromList,
   moveCardIds,

@@ -3,12 +3,6 @@ import type { Boards } from "../types";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import { addBoard } from "./boardThunks";
 
-export const exampleBoardId = "example-board-1";
-export const exampleListId = [
-  "example-list-1",
-  "example-list-2",
-  "example-list-3",
-];
 interface Board {
   id: string;
   title: string;
@@ -41,6 +35,10 @@ export const boardSlice = createSlice({
     setBoards: (state, action: PayloadAction<Boards>) => {
       state.boards = action.payload;
       state.isLoading = false;
+    },
+    resetBoards: (state) => {
+      state.boards = {};
+      state.isLoading = true;
     },
     addListToBoard: (
       state,
@@ -78,6 +76,7 @@ export const {
   optimisticAddBoard,
   optimisticRemoveBoard,
   setBoards,
+  resetBoards,
   addListToBoard,
   removeListFromBoard,
   moveListIds,

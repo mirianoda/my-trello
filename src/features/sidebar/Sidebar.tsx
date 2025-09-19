@@ -70,7 +70,7 @@ const Sidebar = () => {
                     onChange={(e) => setNewBoardTitle(e.target.value)}
                   />
                 </form>
-                <div className={styles.addingBoard}>
+                <div className={styles.addBoardButtons}>
                   <div
                     className={styles.addBoardConfirmButton}
                     onClick={handleAddBoard}

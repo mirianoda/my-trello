@@ -1,9 +1,95 @@
-//glass-card
-$blur-amount-gray: 10px;
-$bg-opacity: 0.3;
-$border-radius: 12px;
-$shadow-color: rgba(0, 0, 0, 0.1);
-$gray-color: rgb(67, 67, 67);
+// -------------------------
+// Color tokens
+// -------------------------
+// $color-primary: ;
+// $color-primary-hover: ;
+// $color-secondary: ;
+// $color-success: ;
+// $color-error: ;
 
-//text-color
-$message-color: rgb(90, 90, 90);
+$color-text-primary: #ffffff;
+$color-text-secondary: #777777;
+$color-text-black: #404040;
+
+$color-bg-board: linear-gradient(to bottom left, #f964be, #b09dd6, #7f81e5);
+$color-bg-list: rgb(236, 236, 236);
+$color-bg-card: rgb(255, 255, 255);
+$color-bg-login: #282828;
+$color-bg-glass: rgb(66, 66, 66, 0.3);
+$color-bg-glass-muted: rgb(255, 255, 255, 0.3);
+$color-bg-glass-muted-hover: rgb(255, 255, 255, 0.15);
+
+$color-input-bg: #ffffff;
+$color-button-bg: rgb(225, 187, 255);
+
+// -------------------------
+// Typography tokens
+// -------------------------
+$font-sans: "Noto Sans JP", sans-serif;
+$font-logo: "Sansation", sans-serif;
+
+$font-size-sm: 12px;
+$font-size-md: 14px;
+$font-size-lg: 16px;
+$font-size-xl: 24px;
+$font-size-logo: 30px;
+$font-size-login-logo: 60px;
+
+$font-weight-regular: 400;
+$font-weight-medium: 500;
+$font-weight-bold: 700;
+
+$letter-spacing: 1.5px;
+
+$icon-size-xs: 16px;
+$icon-size-sm: 20px;
+$icon-size-regular: 24px;
+$character-size: 100px;
+
+// -------------------------
+// ui tokens
+// -------------------------
+$list-width: 250px;
+$searchbox-height: 43px;
+$searchbox-width: 200px;
+$sidebar-width: 50px;
+$sidebar-width-open: 300px;
+$message-max-width: 300px;
+
+// -------------------------
+// Spacing tokens
+// -------------------------
+$spacing-xs: 5px;
+$spacing-sm: 10px;
+$spacing-md: 16px;
+$spacing-lg: 24px;
+$spacing-xl: 32px;
+
+// -------------------------
+// Radii tokens
+// -------------------------
+$radii-sm: 5px;
+$radii-md: 10px;
+$radii-lg: 12px;
+$radii-full: 9999px;
+
+// -------------------------
+// Shadow tokens
+// -------------------------
+$shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+$shadow-md: 0 4px 30px rgba(0, 0, 0, 0.1);
+$shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.15);
+$shadow-list: 0px 3px 15px -5px #777777;
+$shadow-card: 0px 3px 5px -5px #777777;
+
+// -------------------------
+// Blur / Glass effect
+// -------------------------
+$blur-sm: 4px;
+$blur-md: 10px;
+$blur-lg: 16px;
+
+// -------------------------
+// transition tokens
+// -------------------------
+$transition-width: width 0.5s ease;

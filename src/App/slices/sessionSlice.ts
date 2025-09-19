@@ -13,8 +13,11 @@ export const sessionSlice = createSlice({
     selectBoard: (state, action: PayloadAction<{ boardId: string }>) => {
       state.currentBoardId = action.payload.boardId;
     },
+    resetSession: (state) => {
+      state.currentBoardId = "";
+    },
   },
 });
 
-export const { selectBoard } = sessionSlice.actions;
+export const { selectBoard, resetSession } = sessionSlice.actions;
 export default sessionSlice.reducer;

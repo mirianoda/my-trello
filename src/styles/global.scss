@@ -1,3 +1,5 @@
+@use "./tokens" as *;
+
 * {
   box-sizing: border-box;
 }
@@ -9,13 +11,13 @@ html {
 }
 
 body {
-  margin: 0;
-  padding: 0;
   width: 100%;
   min-height: 100vh;
-  background: linear-gradient(to bottom left, #f964be, #b09dd6, #7f81e5);
+  margin: 0;
+  padding: 0;
+  background: $color-bg-board;
   background-attachment: fixed;
-  font-family: sans-serif;
+  font-family: $font-sans;
 }
 
 #root {

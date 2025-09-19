@@ -1,3 +1,6 @@
+@use "../../../../styles/tokens" as *;
+@use "../../../../styles/mixins" as *;
+
 .container {
   display: flex;
   width: max-content;
@@ -8,62 +11,49 @@
 
   .addList {
     display: flex;
-    background-color: rgb(255, 255, 255, 0.3);
+    background-color: $color-bg-glass-muted;
     width: fit-content;
     min-width: max-content;
     height: fit-content;
-    padding: 8px 12px 8px 8px;
-    border-radius: 5px;
+    padding: $spacing-sm;
+    padding-right: $spacing-md;
+    border-radius: $radii-sm;
     align-items: center;
     justify-content: center;
-    color: white;
-    flex-shrink: 0;
+    color: $color-text-primary;
     cursor: pointer;
     &:hover {
-      background-color: rgba(255, 255, 255, 0.15);
+      background-color: $color-bg-glass-muted-hover;
     }
   }
 
   .addingList {
-    background-color: rgb(236, 236, 236);
-    padding: 20px 10px 10px 10px;
-    box-shadow: 0px 3px 15px -5px #777777;
-    border-radius: 10px;
     height: fit-content;
-    width: 250px;
+    width: $list-width;
+    background-color: $color-bg-list;
+    padding: $spacing-md;
+    box-shadow: $shadow-list;
+    border-radius: $radii-md;
 
     input {
-      background: white;
-      outline: none;
-      border: solid 1px white;
-      padding: 7px;
-      border-radius: 5px;
+      @include input-default;
+      color: $color-text-black;
       width: 100%;
-      height: 2.2rem;
-      font-size: 15px;
+      padding: $spacing-sm;
+      font-size: $font-size-lg;
     }
 
     .addingListButtons {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: $spacing-sm;
 
       .addListConfirmButton {
-        background-color: rgb(225, 187, 255);
-        width: fit-content;
-        height: fit-content;
-        padding: 7px;
-        border-radius: 5px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 14px;
-        margin-top: 5px;
-        cursor: pointer;
+        @include button-default;
       }
 
       .icon {
-        margin-top: 3px;
+        margin-top: $spacing-xs;
         cursor: pointer;
       }
     }

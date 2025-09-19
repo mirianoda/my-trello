@@ -127,11 +127,18 @@ function App() {
     };
 
     const boardsCol = collection(db, "boards");
-    const unsubscribeBoards = onSnapshot(boardsCol, (snap) => {
+    const boardsQuery = query(
+      boardsCol,
+      where("members", "array-contains", user.uid)
+    );
+    const unsubscribeBoards = onSnapshot(boardsQuery, (snap) => {
       console.log("📋 ボード更新");
       latestBoards = {};
+      const boardIds: string[] = [];
+
       snap.docs.forEach((d) => {
         const data = d.data();
+        boardIds.push(d.id);
         latestBoards[d.id] = {
           id: data.id,
           title: data.title,
@@ -141,46 +148,93 @@ function App() {
           lists: [],
         };
       });
+
+      updateListenersForBoards(boardIds);
       syncAllData();
     });
 
-    const listsCol = collection(db, "lists");
-    const unsubscribeLists = onSnapshot(listsCol, (snap) => {
-      console.log("📝 リスト更新");
-      latestLists = {};
-      snap.docs.forEach((d) => {
-        const data = d.data();
-        latestLists[d.id] = {
-          id: data.id,
-          title: data.title,
-          boardId: data.boardId,
-          order: data.order,
-          cards: [],
-        };
-      });
-      syncAllData();
-    });
+    let unsubscribeLists: (() => void) | null = null;
+    let unsubscribeCards: (() => void) | null = null;
 
-    const cardsCol = collection(db, "cards");
-    const unsubscribeCards = onSnapshot(cardsCol, (snap) => {
-      console.log("🃏 カード更新");
-      latestCards = {};
-      snap.docs.forEach((d) => {
-        const data = d.data();
-        latestCards[d.id] = {
-          id: data.id,
-          title: data.title,
-          listId: data.listId,
-          order: data.order,
-        };
+    const updateListenersForBoards = (boardIds: string[]) => {
+      if (unsubscribeLists) {
+        unsubscribeLists();
+        unsubscribeLists = null;
+      }
+      if (unsubscribeCards) {
+        unsubscribeCards();
+        unsubscribeCards = null;
+      }
+
+      if (boardIds.length === 0) {
+        latestLists = {};
+        latestCards = {};
+        syncAllData();
+        return;
+      }
+
+      const listsCol = collection(db, "lists");
+      const listsQuery = query(listsCol, where("boardId", "in", boardIds));
+      unsubscribeLists = onSnapshot(listsQuery, (snap) => {
+        console.log("📝 リスト更新");
+        latestLists = {};
+        const listIds: string[] = [];
+
+        snap.docs.forEach((d) => {
+          const data = d.data();
+          listIds.push(d.id);
+          latestLists[d.id] = {
+            id: data.id,
+            title: data.title,
+            boardId: data.boardId,
+            order: data.order,
+            cards: [],
+          };
+        });
+
+        updateCardsListener(listIds);
+        syncAllData();
       });
-      syncAllData();
-    });
+    };
+
+    const updateCardsListener = (listIds: string[]) => {
+      if (unsubscribeCards) {
+        unsubscribeCards();
+        unsubscribeCards = null;
+      }
+
+      if (listIds.length === 0) {
+        latestCards = {};
+        syncAllData();
+        return;
+      }
+
+      const cardsCol = collection(db, "cards");
+      const cardsQuery = query(cardsCol, where("listId", "in", listIds));
+      unsubscribeCards = onSnapshot(cardsQuery, (snap) => {
+        console.log("🃏 カード更新");
+        latestCards = {};
+        snap.docs.forEach((d) => {
+          const data = d.data();
+          latestCards[d.id] = {
+            id: data.id,
+            title: data.title,
+            listId: data.listId,
+            order: data.order,
+          };
+        });
+        syncAllData();
+      });
+    };
 
     return () => {
       unsubscribeBoards();
-      unsubscribeLists();
-      unsubscribeCards();
+      if (unsubscribeLists) {
+        unsubscribeLists();
+      }
+      if (unsubscribeCards) {
+        unsubscribeCards();
+      }
     };
   }, [user, dispatch]);
 

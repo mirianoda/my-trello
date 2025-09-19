@@ -17,14 +17,19 @@ import {
   MenuItem,
   Tooltip,
 } from "@mui/material";
-import { useAppSelector } from "../../App/hooks";
+import { useAppSelector, useAppDispatch } from "../../App/hooks";
 import { useState } from "react";
 import { signOut } from "firebase/auth";
 import { auth } from "../../firebase";
 import toast from "react-hot-toast";
+import { resetBoards } from "../contents/board/boardSlice";
+import { resetLists } from "../contents/list/listSlice";
+import { resetCards } from "../contents/card/cardSlice";
+import { resetSession } from "../../App/slices/sessionSlice";
 
 const Header = () => {
   const user = useAppSelector((state) => state.user.user);
+  const dispatch = useAppDispatch();
   //MUI（Menuコンポーネント）
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const open = Boolean(anchorEl);
@@ -38,14 +43,21 @@ const Header = () => {
     setAnchorEl(null);
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     try {
-      signOut(auth);
+      dispatch(resetBoards());
+      dispatch(resetLists());
+      dispatch(resetCards());
+      dispatch(resetSession());
+
+      await signOut(auth);
+
+      toast.success("ログアウトしました");
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
       } else {
-        toast.error("ログインに失敗しました");
+        toast.error("ログアウトに失敗しました");
       }
     }
   };
@@ -101,14 +113,7 @@ const Header = () => {
 
           <Menu anchorEl={anchorEl} open={open} onClose={handleCloseMenu}>
             <ListItem>
-              <ListItemText
-                primary="アカウント"
-                slotProps={{
-                  primary: {
-                    sx: { fontSize: "13px", paddingRight: "5px" },
-                  },
-                }}
-              />
+              <p className={styles.accountTitle}>アカウント</p>
             </ListItem>
             <ListItem>
               <Avatar className={styles.menuAvatar} src={user?.photo} />

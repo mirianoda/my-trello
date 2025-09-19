@@ -1,8 +1,50 @@
 @use "./tokens" as *;
 
+@mixin logo {
+  font-family: $font-logo;
+  font-weight: 300;
+  font-style: normal;
+}
+
+@mixin input-default {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: $color-text-primary;
+}
+
+@mixin button-default {
+  background-color: $color-button-bg;
+  color: $color-text-black;
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-sm;
+  border-radius: $radii-sm;
+  font-size: $font-size-md;
+  cursor: pointer;
+}
+
 @mixin glass-card {
-  backdrop-filter: blur($blur-amount-gray);
-  -webkit-backdrop-filter: blur($blur-amount-gray);
-  background: rgba($gray-color, $bg-opacity);
-  box-shadow: 0 4px 30px $shadow-color;
+  backdrop-filter: blur($blur-md);
+  background: $color-bg-glass;
+  box-shadow: $shadow-md;
+}
+
+@mixin icon-container {
+  background-color: $color-bg-glass-muted;
+  width: fit-content;
+  height: fit-content;
+  padding: $spacing-sm;
+  border-radius: $radii-sm;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .icon {
+    width: $icon-size-regular;
+    height: $icon-size-regular;
+  }
 }
